@@ -1,67 +1,79 @@
 import React, { useState, useEffect } from "react";
-import { NativeBaseProvider, Box, extendTheme, Button } from "native-base";
+import { NativeBaseProvider, Box, extendTheme, Button, Text, Container, Center, Heading } from "native-base";
+import axios from 'axios'
+import './App.css'
 
 const STATUS = {
-  LOADING:{label:'Carregando'},
-  ON: {label:'Ligado'},
-  OFF:{label:'Desligado'}
+  LOADING: { label: 'Carregando' , info: 'Procurando ESP32', bgColor: "#ffaa00" },
+  ON: { label: 'Desligar' , info: 'Aparelho acionado', bgColor: "#b9d7a1"},
+  OFF: { label: 'Ligar', info: 'Aparelho desligado', bgColor:  "#98092b" }
 }
+
+const BASE_URL = 'http://localhost:8080/'
 
 export default function App() {
   const [power, setPower] = useState(false)
-  const [labelButton, setLabelButton] = useState('');
-  const [wifiList, setWifiList] = useState([]);
+  const [statusInfo, setStatusInfo] = useState(STATUS.OFF)
+  const [espConnection, setEspConnection] = useState();
 
-  useEffect(()=>{
-    if(!power){
-      return setLabelButton('Desligado')
-    }
-
-    setLabelButton('Ligado')
-  },[power])
-
-  useEffect(()=>{
-    fetch('http://localhost:8080/get-current-connection').then(ret=>{
-        console.log('testeret ', ret)
-        setWifiList([...ret]);
+  useEffect(() => {
+    axios.get( BASE_URL + 'get-esp-connection').then(ret => {
+      setEspConnection({ ...ret })
     })
-  },[])
+  }, [])
 
-  const newColorTheme = {
-    brand: {
-      900: "#8287af",
-      800: "#7c83db",
-      700: "#1B2430",
-    },
-  };
-  const theme = extendTheme({ colors: newColorTheme });
-
-  function callPower() {
-    const newPower = !power;
-    setPower(newPower)
-
-    if (newPower) {
-      fetch('http://192.168.4.1:80/desligar').then(ret => {
-        console.log(ret);
-      });
-    } else {
-      fetch('http://192.168.4.1:80/ligar');
+  useEffect(() => {
+    if (statusInfo.label == 'Carregando') {
+      setPower(!power)
+      turnOnEsp();
     }
+  }, [espConnection])
+
+  function turnOnEsp() {
+    fetch('http://192.168.4.1:80/ligar');
+    setStatusInfo({...STATUS.ON})
   }
 
-  return (
-    <NativeBaseProvider theme={theme}>
-      <Box flex={1} bg="brand.700" alignItems="center" justifyContent="center">
-        <Button
-          size={'md'}
-          onPress={() => callPower()}
-        > 'teste'  </Button>
+  function turnOffEsp() {
+    fetch('http://192.168.4.1:80/desligar');
+    setStatusInfo({...STATUS.OFF})
+  }
 
-      {wifiList && wifiList.map(item=>(
-        item.ssid
-      ))}
-      {console.log('teste', wifiList)}
+  function connectEspWifi(){
+    axios.get( BASE_URL + 'get-esp-connection').then(ret => {
+      setEspConnection({ ...ret })
+    })
+  }
+
+  function callPower() { // TODO Fazer condição para evitar clicar várias vezes
+    if (!espConnection) {
+      setStatusInfo({...STATUS.LOADING})
+      return
+    }
+    const newPower = !power;
+    setPower(!power)
+
+    if (newPower) {
+      turnOffEsp();
+    } else {
+      turnOnEsp();
+    }
+  }
+  return (
+    <NativeBaseProvider >
+
+      <Box flex={1} bg={statusInfo.bgColor} alignItems="center" justifyContent="center">
+        <Text mt="3" fontWeight="medium">
+            {statusInfo.info}
+        </Text>
+      </Box>;
+
+      <Box flex={4} bg={statusInfo.bgColor} alignItems="center" justifyContent="center">
+        <Button size={'md'} onPress={() => callPower()}>
+          {statusInfo.label}
+        </Button>
       </Box>
+
     </NativeBaseProvider>
   );
 }
