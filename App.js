@@ -30,12 +30,20 @@ export default function App() {
   }, [espConnection])
 
   function turnOnEsp() {
-    fetch('http://192.168.4.1:80/ligar');
+    fetch('http://192.168.4.1:80/ligar').then(ret=>{
+      console.log('ret - onn', ret)
+    }).catch(err=>{
+      console.log('err',err)
+    });
     setStatusInfo({...STATUS.ON})
   }
 
   function turnOffEsp() {
-    fetch('http://192.168.4.1:80/desligar');
+    fetch('http://192.168.4.1:80/desligar').then(ret=>{
+      console.log('ret - off', ret)
+    }).catch(err=>{
+      console.log('err',err)
+    });;
     setStatusInfo({...STATUS.OFF})
   }
 
