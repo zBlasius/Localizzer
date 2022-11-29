@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, Box, Button, Text } from 'react-native';
 import axios from 'axios'
+import { PermissionsAndroid } from 'react-native';
+import {wifi} from 'react-native-android-wifi';
 
 const STATUS = {
   LOADING: { label: 'Carregando', info: 'Procurando ESP32', bgColor: "#ffaa00" },
@@ -18,20 +20,58 @@ export default function App() {
   const [wifiText, setWifiText] = useState('')
 
   useEffect(() => {
-    axios.get(BASE_URL + 'get-esp-connection').then(ret => {
-      setEspConnection({ ...ret })
-    })
+    // axios.get(BASE_URL + 'get-esp-connection').then(ret => {
+    //   setEspConnection({ ...ret })
+    // })
 
   }, [])
 
   useEffect(() => {
     if (statusInfo.label == 'Carregando') {
       setPower(!power)
-      turnOnEsp();
+      // turnOnEsp();
     }
+    testeWifi();
   }, [espConnection])
 
-  
+  async function testeWifi() {
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'Wifi networks',
+          'message': 'We need your permission in order to find wifi networks',
+          "buttonPositive":"ok"
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Thank you for your permission! :)");
+        getWifiList()
+      } else {
+        console.log("You will not able to retrieve wifi available networks list");
+      }
+    } catch (err) {
+      // console.warn(err)
+    }
+  }
+
+
+  function getWifiList(){
+    try {
+      wifi.isEnabled((isEnabled) => {
+        console.log('deu certo')
+        if (isEnabled) {
+          setWifiText('FOI CARALHOOOOOO')
+        } else {
+          setWifiText('deu ruim')
+        }
+      });
+    } catch (error) {
+      console.log('deu erro:', error)
+    }
+  }
+
 
   function turnOnEsp() {
     fetch('http://192.168.4.1:80/ligar').then(ret => {
