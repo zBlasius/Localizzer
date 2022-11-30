@@ -23,49 +23,45 @@ export default function App() {
   const [power, setPower] = useState(false)
   const [statusInfo, setStatusInfo] = useState(STATUS.OFF)
   const [espConnection, setEspConnection] = useState();
-  const [permissionTest, setPermissionTest] = useState('')
-  const [wifiText, setWifiText] = useState('')
-  const [buttonInfo, setButtonInfo] = useState({label:'Ligar', color:'gray'})
+
 
   useEffect(() => {
     axios.get(BASE_URL + 'get-esp-connection').then(ret => {
-      if(statusInfo.label != 'Carregando') {
-        setStatusInfo({ ...STATUS.OFF })
-        setPower(false);
-      }
       setEspConnection({ ...ret })
     })
 
   }, [])
 
-  useEffect(() => {
-    if (statusInfo.label == 'Carregando') {
+  useEffect(()=>{
+    if(statusInfo.label == 'Carregando'){
       turnOnEsp();
     }
-  }, [espConnection])
+  },[espConnection])
+
+  useEffect(()=>{
+    if(statusInfo.label == 'Ligar'){
+      setPower(true);
+    }
+    setPower(false);
+  },[])
 
   function turnOnEsp() {
+    setPower(false)
     axios.get(BASE_URL + 'ligar').then(ret => {
-      console.log('ret - onn', ret)
+      setStatusInfo({ ...STATUS.ON })
     }).catch(err => {
       console.log('err', err)
     });
-    setStatusInfo({ ...STATUS.ON })
+    
   }
 
   function turnOffEsp() {
+    setPower(true);
     axios.get(BASE_URL + 'desligar').then(ret => {
-      console.log('ret - off', ret)
+      setStatusInfo({ ...STATUS.OFF })
     }).catch(err => {
       console.log('err', err)
     });;
-    setStatusInfo({ ...STATUS.OFF })
-  }
-
-  function connectEspWifi() {
-    axios.get(BASE_URL + 'get-esp-connection').then(ret => {
-      setEspConnection({ ...ret })
-    })
   }
 
   function callPower() { // TODO Fazer condição para evitar clicar várias vezes
@@ -73,15 +69,14 @@ export default function App() {
       setStatusInfo({ ...STATUS.LOADING })
       return
     }
-    const newPower = !power;
-    setPower(!power)
 
-    if (newPower) {
-      turnOffEsp();
-    } else {
+    if (power) {
       turnOnEsp();
+    } else {
+      turnOffEsp();
     }
   }
+
   return (
 
     <View style={viewStyle}>
