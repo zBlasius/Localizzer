@@ -20,6 +20,10 @@ app.get('/', (req, res) => {
     res.json({ ok: true })
 })
 
+function syncronizeEsp(){
+    
+}
+
 function getCurrentConnection(cb) {
     wifi.getCurrentConnections((error, currentConnections) => {
         if (error) {
@@ -36,9 +40,9 @@ function getWifiList() {
             if (error) {
                 return reject(error)
             } else {
-                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G'))
+                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G')) // LOCALIZZER
 
-                if (!espNetwork) return getWifiList()
+                if (!espNetwork) return getWifiList();
                 resolve(espNetwork);
             }
         });
@@ -73,13 +77,11 @@ app.get('/get-esp-connection', async (req, res) => {
 })
 
 app.get('/ligar', async (req, res) => {
-
     return res.json({power:true})
 })
 
 
 app.get('/desligar', async (req, res) => {
-
     return res.json({power:false})
 })
 

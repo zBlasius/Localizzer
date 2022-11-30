@@ -63,11 +63,11 @@ export default function App() {
     const newPower = !power;
     setPower(!power)
 
-    // if (newPower) {
-    //   turnOffEsp();
-    // } else {
-    //   turnOnEsp();
-    // }
+    if (newPower) {
+      turnOffEsp();
+    } else {
+      turnOnEsp();
+    }
   }
   return (
 
