@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { View, Box, Button, Text } from 'react-native';
 import axios from 'axios'
+import './App.css'
 
 const STATUS = {
   LOADING: { label: 'Carregando', info: 'Procurando ESP32', bgColor: "#ffaa00" },
   ON: { label: 'Desligar', info: 'Aparelho acionado', bgColor: "#b9d7a1" },
   OFF: { label: 'Ligar', info: 'Aparelho desligado', bgColor: "#98092b" }
+}
+
+const viewStyle = {
+  display: "flex",
+  height: '100%',
+  padding: 20,
+  alignItems:'center',
+  fontSize: '3vh'
 }
 
 const BASE_URL = 'http://localhost:8080/'
@@ -16,9 +25,14 @@ export default function App() {
   const [espConnection, setEspConnection] = useState();
   const [permissionTest, setPermissionTest] = useState('')
   const [wifiText, setWifiText] = useState('')
+  const [buttonInfo, setButtonInfo] = useState({label:'Ligar', color:'gray'})
 
   useEffect(() => {
     axios.get(BASE_URL + 'get-esp-connection').then(ret => {
+      if(statusInfo.label != 'Carregando') {
+        setStatusInfo({ ...STATUS.OFF })
+        setPower(false);
+      }
       setEspConnection({ ...ret })
     })
 
@@ -26,7 +40,6 @@ export default function App() {
 
   useEffect(() => {
     if (statusInfo.label == 'Carregando') {
-      setPower(!power)
       turnOnEsp();
     }
   }, [espConnection])
@@ -71,33 +84,17 @@ export default function App() {
   }
   return (
 
-    <View style={{
-        display: "flex",
-        height: '100%',
-        padding: 20,
-        justifyContent:'center',
-        alignItems:'center'
-    }}>
+    <View style={viewStyle}>
+      <div className="section-01">
+        <Text style={{ marginBottom: 30, fontSize:25 }}>
+          {statusInfo?.info ?? ''}
+        </Text>
+      </div>
 
-      {/* <Box flex={1} bg={statusInfo?.bgColor ?? ''} alignItems="center" justifyContent="center"> */}
-      <Text style={{
-        marginBottom:30
-      }}>
-        {statusInfo?.info ?? ''}
-      </Text>
-
-      <Text style={{
-        marginBottom:30
-      }}>
-        {permissionTest} ,,,,, {wifiText}
-      </Text>
-      {/* </Box>; */}
-      {/* <Box flex={4} bg={statusInfo?.bgColor ?? ''} alignItems="center" justifyContent="center"> */}
-      <Button style={{ marginTop: 100 }} title="tester" onPress={() => callPower()} />
-
-      {/* </Box> */}
+      <div className="section-02">
+        <Button style={{ marginTop: 100, background: statusInfo.bgColor }} title={statusInfo.label} onPress={() => callPower()} />
+      </div>
     </View>
-
 
   );
 }

@@ -1,3 +1,13 @@
 body{
     transition: 2s;
 }
+
+.section-01 {
+    height:70%;
+    display:flex; 
+    align-items:center
+}
+
+.section-02{
+    height: 30%
+}
