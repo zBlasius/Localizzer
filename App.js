@@ -31,10 +31,8 @@ export default function App() {
     }
   }, [espConnection])
 
-  
-
   function turnOnEsp() {
-    fetch('http://192.168.4.1:80/ligar').then(ret => {
+    axios.get(BASE_URL + 'ligar').then(ret => {
       console.log('ret - onn', ret)
     }).catch(err => {
       console.log('err', err)
@@ -43,7 +41,7 @@ export default function App() {
   }
 
   function turnOffEsp() {
-    fetch('http://192.168.4.1:80/desligar').then(ret => {
+    axios.get(BASE_URL + 'desligar').then(ret => {
       console.log('ret - off', ret)
     }).catch(err => {
       console.log('err', err)

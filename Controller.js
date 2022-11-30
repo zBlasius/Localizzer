@@ -36,11 +36,10 @@ function getWifiList() {
             if (error) {
                 return reject(error)
             } else {
-                let espNetwork = networks.find(item => (item.ssid == 'CATOLICASC'))
+                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G'))
 
-                console.log('recursive');
                 if (!espNetwork) return getWifiList()
-                resolve(espNetwork)
+                resolve(espNetwork);
             }
         });
     })
@@ -71,6 +70,17 @@ app.get('/get-esp-connection', async (req, res) => {
     const currentWifi = await getWifiList();
 
     return res.json(currentWifi)
+})
+
+app.get('/ligar', async (req, res) => {
+
+    return res.json({power:true})
+})
+
+
+app.get('/desligar', async (req, res) => {
+
+    return res.json({power:false})
 })
 
 app.post('connect-wifi-by-ssid', (req,res)=> {
