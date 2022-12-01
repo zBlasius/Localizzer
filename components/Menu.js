@@ -24,12 +24,11 @@ export default function Menu() {
     const [statusInfo, setStatusInfo] = useState(STATUS.OFF)
     const [espConnection, setEspConnection] = useState();
   
-  
     useEffect(() => {
-      axios.get(BASE_URL + 'get-esp-connection').then(ret => {
+      const ssid = localStorage.getItem('ssid');
+      axios.get(BASE_URL + 'get-esp-connection', {params:{ssid}}).then(ret => {
         setEspConnection({ ...ret })
       })
-  
     }, [])
   
     useEffect(()=>{

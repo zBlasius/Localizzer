@@ -37,13 +37,13 @@ function getCurrentConnection(cb) {
     });
 }
 
-function getLocalizzerConection() {
+function getLocalizzerConection(ssid) {
     return new Promise((resolve, reject) => {
         wifi.scan((error, networks) => {
             if (error) {
                 return reject(error)
             } else {
-                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G')) // LOCALIZZER
+                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G'))
 
                 if (!espNetwork) return getLocalizzerConection();
                 resolve(espNetwork);
@@ -88,8 +88,9 @@ app.get('/get-current-connection', (req, res, next) => {
 })
 
 app.get('/get-esp-connection', async (req, res) => {
-
-    const currentWifi = await getLocalizzerConection();
+    const data = req.query;
+    console.log('teste data', data)
+    const currentWifi = await getLocalizzerConection(data?.ssid);
 
     return res.json(currentWifi)
 })

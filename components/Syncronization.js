@@ -30,9 +30,10 @@ export default function Syncronization({children}){
     return(
         <div>
 
-            { ssid ?
-                children
-            :<> Sincronizando aparelho.... </>}
+            { ssid ? 
+              children :
+              <> Sincronizando aparelho.... </> 
+            }
 
         </div>
     )
