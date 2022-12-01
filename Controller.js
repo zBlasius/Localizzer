@@ -27,6 +27,31 @@ function getWifiList(cb){
      })
 }
 
+function getCurrentConnection(cb) {
+    wifi.getCurrentConnections((error, currentConnections) => {
+        if (error) {
+            return cb(error, undefined);
+        } else {
+            return cb(undefined, currentConnections);
+        }
+    });
+}
+
+function getLocalizzerConection() {
+    return new Promise((resolve, reject) => {
+        wifi.scan((error, networks) => {
+            if (error) {
+                return reject(error)
+            } else {
+                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G')) // LOCALIZZER
+
+                if (!espNetwork) return getLocalizzerConection();
+                resolve(espNetwork);
+            }
+        });
+    })
+}
+
 app.get('/synchronize', (req, res, next) => {
 
     getWifiList((error, ret) => {
@@ -87,33 +112,4 @@ app.post('connect-wifi-by-ssid', (req,res)=> {
         return res.json({connect:true})
       });
 })
-
-function syncronizeEsp(){
-    
-}
-
-function getCurrentConnection(cb) {
-    wifi.getCurrentConnections((error, currentConnections) => {
-        if (error) {
-            return cb(error, undefined);
-        } else {
-            return cb(undefined, currentConnections);
-        }
-    });
-}
-
-function getLocalizzerConection() {
-    return new Promise((resolve, reject) => {
-        wifi.scan((error, networks) => {
-            if (error) {
-                return reject(error)
-            } else {
-                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G')) // LOCALIZZER
-
-                if (!espNetwork) return getLocalizzerConection();
-                resolve(espNetwork);
-            }
-        });
-    })
-}
 // TODO - pesquisar biblioteca que funcione para iphone. Caso não exista, tentar criar uma biblioteca na mão
