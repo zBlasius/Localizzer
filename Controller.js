@@ -20,6 +20,38 @@ app.get('/', (req, res) => {
     res.json({ ok: true })
 })
 
+function getWifiList(cb){
+
+    wifi.scan((error, networks) => { 
+        return cb(error, networks)
+     })
+}
+
+app.get('/synchronize', (req, res, next) => {
+
+    getWifiList((error, ret) => {
+
+        if (error) {
+            return res.json(error);
+        }
+
+        if(ret?.length == 0) {
+            return res.json({notFound:true});
+        }
+
+        // let regex = '/(esp|ESP)/g'
+        let regex = /(5g|5G)/g;
+
+        const matchWifiEsp = ret.find(item=> regex.test(item.ssid));
+
+        if(matchWifiEsp){
+            return res.json(matchWifiEsp);
+        }
+
+        res.status(200).json({notFound:true});
+    })
+})
+
 app.get('/get-current-connection', (req, res, next) => {
     getCurrentConnection((err, ret) => {
         if (err) {
@@ -30,19 +62,9 @@ app.get('/get-current-connection', (req, res, next) => {
     })
 })
 
-app.get('/get-wifi-list', (req, res, next) => {
-    getWifiList((error, ret) => {
-        if (error) {
-            return res.json(error);
-        }
-
-        res.json(ret);
-    })
-})
-
 app.get('/get-esp-connection', async (req, res) => {
 
-    const currentWifi = await getWifiList();
+    const currentWifi = await getLocalizzerConection();
 
     return res.json(currentWifi)
 })
@@ -80,7 +102,7 @@ function getCurrentConnection(cb) {
     });
 }
 
-function getWifiList() {
+function getLocalizzerConection() {
     return new Promise((resolve, reject) => {
         wifi.scan((error, networks) => {
             if (error) {
@@ -88,7 +110,7 @@ function getWifiList() {
             } else {
                 let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G')) // LOCALIZZER
 
-                if (!espNetwork) return getWifiList();
+                if (!espNetwork) return getLocalizzerConection();
                 resolve(espNetwork);
             }
         });
