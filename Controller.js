@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
 })
 
 function getWifiList(cb){
-
     wifi.scan((error, networks) => { 
         return cb(error, networks)
      })
@@ -73,7 +72,7 @@ app.get('/synchronize', (req, res, next) => {
             return res.json(matchWifiEsp);
         }
 
-        res.status(200).json({notFound:true});
+        res.status(200).json({notFound:true}); // ? Could this function be better ?
     })
 })
 
