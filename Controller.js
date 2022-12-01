@@ -64,7 +64,7 @@ app.get('/synchronize', (req, res, next) => {
             return res.json({notFound:true});
         }
 
-        // let regex = '/(esp|ESP)/g'
+        // let regex = '/(esp|ESP)/g' // * para encontrar o esp32
         let regex = /(5g|5G)/g;
 
         const matchWifiEsp = ret.find(item=> regex.test(item.ssid));
@@ -89,7 +89,6 @@ app.get('/get-current-connection', (req, res, next) => {
 
 app.get('/get-esp-connection', async (req, res) => {
     const data = req.query;
-    console.log('teste data', data)
     const currentWifi = await getLocalizzerConection(data?.ssid);
 
     return res.json(currentWifi)
@@ -98,7 +97,6 @@ app.get('/get-esp-connection', async (req, res) => {
 app.get('/ligar', async (req, res) => {
     return res.json({power:true})
 })
-
 
 app.get('/desligar', async (req, res) => {
     return res.json({power:false})
@@ -113,4 +111,3 @@ app.post('connect-wifi-by-ssid', (req,res)=> {
         return res.json({connect:true})
       });
 })
-// TODO - pesquisar biblioteca que funcione para iphone. Caso não exista, tentar criar uma biblioteca na mão

@@ -1,11 +1,10 @@
-import react, {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import axios from 'axios'
 
 const BASE_URL = 'http://localhost:8080/'
 
 export default function Syncronization({children}){
     const [ssid, setSsid] = useState(undefined)
-    const [gambi, setGambi] = useState([1,2])
     
     useEffect(()=>{
         let espSsid = localStorage.getItem('ssid');
