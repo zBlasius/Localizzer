@@ -7,9 +7,7 @@ iniciando o client:
 - npm start 
 
 iniciando o server: 
-- npm run server
-ou
-cd ./Localizzer && nodemon Controller.js
+node Controller.js
 
 In android phone, open Expo Go and scan QR code
 In Iphone, scan QR code by camera
