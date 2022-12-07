@@ -4,10 +4,8 @@ import Syncronization from "./components/Syncronization";
 export default function App() {
 
   return (
-
     <Syncronization>
       <Menu />
     </Syncronization>
-
   );
 }

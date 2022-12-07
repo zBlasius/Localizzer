@@ -31,6 +31,7 @@ function getCurrentConnection(cb) {
         if (error) {
             return cb(error, undefined);
         } else {
+            console.log('teste', currentConnections)
             return cb(undefined, currentConnections);
         }
     });
@@ -42,7 +43,7 @@ function getLocalizzerConection(ssid) {
             if (error) {
                 return reject(error)
             } else {
-                let espNetwork = networks.find(item => (item.ssid == 'TRIUNFO_GUSTAVO_5G'))
+                let espNetwork = networks.find(item => (item.ssid == ssid));
 
                 if (!espNetwork) return getLocalizzerConection();
                 resolve(espNetwork);
@@ -56,6 +57,7 @@ app.get('/synchronize', (req, res, next) => {
     getWifiList((error, ret) => {
 
         if (error) {
+
             return res.json(error);
         }
 
@@ -63,8 +65,8 @@ app.get('/synchronize', (req, res, next) => {
             return res.json({notFound:true});
         }
 
-        // let regex = '/(esp|ESP)/g' // * para encontrar o esp32
-        let regex = /(5g|5G)/g;
+        let regex = /(esp|ESP)/g // * para encontrar o esp32
+       // let regex = /(5g|5G)/g;
 
         const matchWifiEsp = ret.find(item=> regex.test(item.ssid));
 
@@ -72,7 +74,7 @@ app.get('/synchronize', (req, res, next) => {
             return res.json(matchWifiEsp);
         }
 
-        res.status(200).json({notFound:true}); // ? Could this function be better ?
+        return res.status(200).json({notFound:true}); // ? Could this function be better ?
     })
 })
 
@@ -94,11 +96,20 @@ app.get('/get-esp-connection', async (req, res) => {
 })
 
 app.get('/ligar', async (req, res) => {
-    return res.json({power:true})
+    const {ssid, passoword} = req.query;
+    console.log('teste', ssid)
+    wifi.connect({ ssid: ssid, password:12345678 }, () => {
+        console.log('Connected'); 
+        return res.json({power:true})
+  });
+  
 })
 
 app.get('/desligar', async (req, res) => {
-    return res.json({power:false})
+    // todo: remover conexão do esp
+    wifi.disconnect( () => {
+        return res.json({power:false})
+      });
 })
 
 app.post('connect-wifi-by-ssid', (req,res)=> {

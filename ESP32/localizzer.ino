@@ -1,6 +1,6 @@
 #include <WiFi.h>
 
-const char *ssid = "Localizzer";
+const char *ssid = "ESP-123456789";
 const char *pass = "12345678";
 
 WiFiServer server(80);  // Port
