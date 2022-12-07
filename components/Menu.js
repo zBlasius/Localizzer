@@ -38,13 +38,6 @@ export default function Menu() {
     }
   }, [espConnection])
 
-  // useEffect(() => {
-  //   if (statusInfo.label == 'Ligar') {
-  //     setPower(true);
-  //   }
-  //   setPower(false);
-  // }, [statusInfo])
-
   function turnOnEsp() {
     setPower(false);
     const ssid = localStorage.getItem('ssid');
