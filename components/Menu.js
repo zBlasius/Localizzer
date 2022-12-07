@@ -20,7 +20,7 @@ const viewStyle = {
 const BASE_URL = 'http://localhost:8080/'
 
 export default function Menu() {
-  const [power, setPower] = useState(false)
+  const [power, setPower] = useState(true)
   const [statusInfo, setStatusInfo] = useState(STATUS.OFF)
   const [espConnection, setEspConnection] = useState();
 
@@ -38,12 +38,12 @@ export default function Menu() {
     }
   }, [espConnection])
 
-  useEffect(() => {
-    if (statusInfo.label == 'Ligar') {
-      setPower(true);
-    }
-    setPower(false);
-  }, [])
+  // useEffect(() => {
+  //   if (statusInfo.label == 'Ligar') {
+  //     setPower(true);
+  //   }
+  //   setPower(false);
+  // }, [statusInfo])
 
   function turnOnEsp() {
     setPower(false);
