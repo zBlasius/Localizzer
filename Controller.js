@@ -38,11 +38,14 @@ function getCurrentConnection(cb) {
 }
 
 function getLocalizzerConection(ssid) {
+    // Obs* funções recursivas consome memória da máquina.
+    // Nesse caso seria mais interessante fazer um loop
     return new Promise((resolve, reject) => {
         wifi.scan((error, networks) => {
             if (error) {
                 return reject(error)
             } else {
+                console.log('netword', networks)
                 let espNetwork = networks.find(item => (item.ssid == ssid));
 
                 if (!espNetwork) return getLocalizzerConection();

@@ -58,7 +58,7 @@ export default function Menu() {
     }).catch()
   }
 
-  function callPower() { // TODO Fazer condição para evitar clicar várias vezes
+  function callPower() {
     if (!espConnection) {
       setStatusInfo({ ...STATUS.LOADING })
       return
